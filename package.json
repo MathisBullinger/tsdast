@@ -1,0 +1,35 @@
+{
+  "name": "tsds",
+  "version": "0.0.1",
+  "description": "TypeScript data structures",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.prod.json",
+    "test": "jest --config jestconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisBullinger/tsds.git"
+  },
+  "keywords": [],
+  "author": "Mathis Bullinger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MathisBullinger/tsds/issues"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "homepage": "https://github.com/MathisBullinger/tsds#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.19",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.4.4",
+    "typescript": "^4.1.3"
+  }
+}
