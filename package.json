@@ -6,7 +6,9 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.prod.json",
-    "test": "jest --config jestconfig.json"
+    "test": "jest --config jestconfig.json",
+    "prepare": "npm run build",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
