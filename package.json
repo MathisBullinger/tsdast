@@ -1,5 +1,5 @@
 {
-  "name": "tsds",
+  "name": "tsdast",
   "version": "0.0.1",
   "description": "TypeScript data structures",
   "main": "lib/index.js",
@@ -10,18 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MathisBullinger/tsds.git"
+    "url": "git+https://github.com/MathisBullinger/tsdast.git"
   },
   "keywords": [],
   "author": "Mathis Bullinger",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MathisBullinger/tsds/issues"
+    "url": "https://github.com/MathisBullinger/tsdast/issues"
   },
   "files": [
     "lib/**/*"
   ],
-  "homepage": "https://github.com/MathisBullinger/tsds#readme",
+  "homepage": "https://github.com/MathisBullinger/tsdast#readme",
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "eslint": "^7.16.0",
