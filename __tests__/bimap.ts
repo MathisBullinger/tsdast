@@ -1,39 +1,41 @@
 import { Bimap } from '../src'
-import { UniqueViolationError } from '../src/error'
+
+const testSides = (
+  bm: Bimap,
+  expected: any,
+  side: 'left' | 'right' = 'left'
+) => {
+  expect(side === 'left' ? bm.left : bm.right).toEqual(expected)
+  expect(side === 'left' ? bm.right : bm.left).toEqual(Bimap.invert(expected))
+}
 
 const bm = new Bimap()
 
 test('empty bimap', () => {
-  expect(bm.left).toEqual({})
-  expect(bm.right).toEqual({})
+  testSides(bm, {})
 })
 
 test('add to left', () => {
   bm.left.l1 = 'r1'
-  expect(bm.left).toEqual({ l1: 'r1' })
-  expect(bm.right).toEqual({ r1: 'l1' })
+  testSides(bm, { l1: 'r1' })
 })
 
 test('rename key', () => {
   bm.left.l1 = 'r1New'
-  expect(bm.left).toEqual({ l1: 'r1New' })
-  expect(bm.right).toEqual({ r1New: 'l1' })
+  testSides(bm, { l1: 'r1New' })
   bm.right.r1New = 'l1New'
-  expect(bm.right).toEqual({ r1New: 'l1New' })
-  expect(bm.left).toEqual({ l1New: 'r1New' })
+  testSides(bm, { r1New: 'l1New' }, 'right')
 })
 
 test('delete key', () => {
   const bm = new Bimap()
   bm.left.foo = 'bar'
   delete bm.left.foo
-  expect(bm.left).toEqual({})
-  expect(bm.right).toEqual({})
+  testSides(bm, {})
 
   bm.right.foo = 'bar'
   delete bm.right.foo
-  expect(bm.left).toEqual({})
-  expect(bm.right).toEqual({})
+  testSides(bm, {})
 })
 
 test('indirect overwrite', () => {
@@ -41,15 +43,13 @@ test('indirect overwrite', () => {
   bm.left.a = 'right'
   bm.left.b = 'right'
 
-  expect(bm.left).toEqual({ b: 'right' })
-  expect(bm.right).toEqual({ right: 'b' })
+  testSides(bm, { b: 'right' })
 
   bm = new Bimap()
   bm.right.a = 'left'
   bm.right.b = 'left'
 
-  expect(bm.right).toEqual({ b: 'left' })
-  expect(bm.left).toEqual({ left: 'b' })
+  testSides(bm, { b: 'left' }, 'right')
 })
 
 test('Bimap.invert', () => {
@@ -59,9 +59,8 @@ test('Bimap.invert', () => {
 
 test('Bimap.from', () => {
   const obj = { l1: 'r1', l2: 'r2' }
-  const { left, right } = Bimap.from(obj)
-  expect(left).toEqual(obj)
-  expect(right).toEqual(Bimap.invert(obj))
+  const bm = Bimap.from(obj)
+  testSides(bm, obj)
   expect(() => Bimap.from({ a: 'foo', b: 'foo' })).toThrow()
   expect(() => Bimap.from({ a: {} } as any)).toThrow()
 })
@@ -70,21 +69,17 @@ test('assign left', () => {
   const bm = Bimap.from({ tmp: 'tmp' })
   const obj = { a: 'b', c: 'd' }
   bm.left = obj
-  expect(bm.left).toEqual(obj)
-  expect(bm.right).toEqual(Bimap.invert(obj))
+  testSides(bm, obj)
 })
 
 test('assign right', () => {
   const bm = Bimap.from({ tmp: 'tmp' })
   const obj = { a: 'b', c: 'd' }
   bm.right = obj
-  expect(bm.right).toEqual(obj)
-  expect(bm.left).toEqual(Bimap.invert(obj))
+  testSides(bm, obj, 'right')
 })
 
 test('left & right aliases', () => {
   expect(bm.l).toBe(bm.left)
   expect(bm.r).toBe(bm.right)
 })
-
-// number, symbol

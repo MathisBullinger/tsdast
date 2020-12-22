@@ -1,8 +1,9 @@
 import { TypeViolationError, UniqueViolationError } from './error'
+
 type BiMap = Record<string, string>
-
-type Primitive = string | number | symbol
-
+type Inverted<T extends Record<string, string>> = {
+  [K in T[keyof T]]: FilterKeys<T, K>
+}
 type FilterKeys<T extends Record<string, any>, C> = keyof Pick<
   T,
   {
@@ -10,16 +11,12 @@ type FilterKeys<T extends Record<string, any>, C> = keyof Pick<
   }[keyof T]
 >
 
-type Inverted<T extends Record<Primitive, Primitive>> = {
-  [K in T[keyof T]]: FilterKeys<T, K>
-}
-
 export default class Bimap {
   private _leftObj: BiMap = {}
   private _rightObj: BiMap = {}
 
   private handler: ProxyHandler<BiMap> = {
-    set: (here, key: string, value: string, ...rest) => {
+    set: (here, key: string, value: string) => {
       const there = this[here === this._leftObj ? '_rightObj' : '_leftObj']
       const oldKey = there[value]
 
