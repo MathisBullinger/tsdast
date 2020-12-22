@@ -11,34 +11,11 @@ type FilterKeys<T extends Record<string, any>, C> = keyof Pick<
   }[keyof T]
 >
 
-export default class Bimap {
+type Entry = [left: string, right: string]
+
+export default class Bimap implements Iterable<Entry> {
   private _leftObj: BiMap = {}
   private _rightObj: BiMap = {}
-
-  private handler: ProxyHandler<BiMap> = {
-    set: (here, key: string, value: string) => {
-      const there = this[here === this._leftObj ? '_rightObj' : '_leftObj']
-      const oldKey = there[value]
-
-      delete there[here[key]]
-      here[key] = value
-      there[value] = key
-      delete here[oldKey]
-
-      return true
-    },
-
-    deleteProperty: (target, key: string) => {
-      const value = target[key]
-      delete target[key]
-      if (value)
-        delete this[target === this._leftObj ? '_rightObj' : '_leftObj'][value]
-      return true
-    },
-  }
-
-  private _left = new Proxy(this._leftObj, this.handler)
-  private _right = new Proxy(this._rightObj, this.handler)
 
   public get left() {
     return this._left
@@ -66,6 +43,17 @@ export default class Bimap {
   }
   public get r() {
     return this._right
+  }
+
+  public [Symbol.iterator]() {
+    let i = -1
+    const entries: Entry[] = Object.entries(this.left)
+    return {
+      next() {
+        i++
+        return { done: i >= entries.length, value: entries[i] }
+      },
+    }
   }
 
   static from(target: BiMap): Bimap {
@@ -110,6 +98,31 @@ export default class Bimap {
 
     return true
   }
+
+  private handler: ProxyHandler<BiMap> = {
+    set: (here, key: string, value: string) => {
+      const there = this[here === this._leftObj ? '_rightObj' : '_leftObj']
+      const oldKey = there[value]
+
+      delete there[here[key]]
+      here[key] = value
+      there[value] = key
+      delete here[oldKey]
+
+      return true
+    },
+
+    deleteProperty: (target, key: string) => {
+      const value = target[key]
+      delete target[key]
+      if (value)
+        delete this[target === this._leftObj ? '_rightObj' : '_leftObj'][value]
+      return true
+    },
+  }
+
+  private _left = new Proxy(this._leftObj, this.handler)
+  private _right = new Proxy(this._rightObj, this.handler)
 
   private proxy() {
     this._left = new Proxy(this._leftObj, this.handler)

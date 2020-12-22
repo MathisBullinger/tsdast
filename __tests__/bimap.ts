@@ -83,3 +83,9 @@ test('left & right aliases', () => {
   expect(bm.l).toBe(bm.left)
   expect(bm.r).toBe(bm.right)
 })
+
+test('iterate', () => {
+  const obj = { a: '1', b: '2', c: '3', d: '4' }
+  const bimap = Bimap.from(obj)
+  expect([...bimap]).toEqual(expect.arrayContaining(Object.entries(obj)))
+})
